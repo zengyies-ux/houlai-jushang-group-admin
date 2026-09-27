@@ -7,6 +7,7 @@ import {
   readdirSync,
   rmSync,
   lstatSync,
+  statSync,
   writeFileSync,
   chmodSync,
 } from 'node:fs';
@@ -48,6 +49,12 @@ const install = spawnSync(npm, ['ci', '--omit=dev', '--no-audit', '--no-fund'], 
   shell: process.platform === 'win32',
 });
 if (install.status !== 0) throw new Error('生产依赖安装失败');
+const requiredBuildFiles = ['dist/server/index.js', 'dist/web/index.html'];
+for (const file of requiredBuildFiles) {
+  const path = join(root, file);
+  if (!existsSync(path) || !statSync(path).isFile() || statSync(path).size === 0)
+    throw new Error(`构建产物缺失：${file}`);
+}
 mkdirSync(join(out, 'runtime'), { recursive: true });
 mkdirSync(join(out, 'app'), { recursive: true });
 mkdirSync(join(out, 'licenses'), { recursive: true });
@@ -74,6 +81,15 @@ cpSync(installedModules, bundledModules, {
   },
 });
 if (!existsSync(bundledModules)) throw new Error('复制后的生产依赖目录不存在');
+for (const file of [
+  ...requiredBuildFiles.map((x) => `app/${x}`),
+  'app/drizzle/0005_task_updates.sql',
+  'app/node_modules/better-sqlite3/package.json',
+]) {
+  const path = join(out, file);
+  if (!existsSync(path) || !statSync(path).isFile() || statSync(path).size === 0)
+    throw new Error(`打包目录缺少文件：${file}`);
+}
 writeFileSync(join(out, 'app', 'package.json'), '{"private":true,"type":"module"}\n');
 const commit = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: root, encoding: 'utf8' });
 const status = spawnSync('git', ['status', '--porcelain', '--untracked-files=all'], {
@@ -158,19 +174,29 @@ mkdirSync(join(root, 'release'), { recursive: true });
 const archive = join(root, 'release', `${name}.zip`);
 rmSync(archive, { force: true });
 if (process.platform === 'win32') {
-  const ps = spawnSync(
-    'powershell',
-    [
-      '-NoProfile',
-      '-Command',
-      `Compress-Archive -Path '${out.replaceAll("'", "''")}' -DestinationPath '${archive.replaceAll("'", "''")}' -Force`,
-    ],
-    { stdio: 'inherit' },
-  );
-  if (ps.status !== 0) throw new Error('压缩失败');
+  const zip = spawnSync('tar.exe', ['-a', '-c', '-f', archive, '-C', stageRoot, name], {
+    stdio: 'inherit',
+  });
+  if (zip.status !== 0) throw new Error('Windows ZIP 压缩失败');
 } else {
   const zip = spawnSync('zip', ['-qry', archive, name], { cwd: stageRoot, stdio: 'inherit' });
   if (zip.status !== 0) throw new Error('压缩失败');
+}
+const contents = spawnSync(process.platform === 'win32' ? 'tar.exe' : 'tar', ['-tf', archive], {
+  encoding: 'utf8',
+  maxBuffer: 32 * 1024 * 1024,
+});
+if (contents.status !== 0) throw new Error('无法检查 ZIP 内容');
+const archiveFiles = contents.stdout.split(/\r?\n/).map((x) => x.replaceAll('\\', '/'));
+for (const file of [
+  'app/build-info.json',
+  ...requiredBuildFiles.map((x) => `app/${x}`),
+  'app/drizzle/0005_task_updates.sql',
+  'app/node_modules/better-sqlite3/package.json',
+  `runtime/${process.platform === 'win32' ? 'node.exe' : 'node'}`,
+]) {
+  if (!archiveFiles.some((entry) => entry.endsWith(`/${file}`)))
+    throw new Error(`ZIP 缺少文件：${file}`);
 }
 const hash = createHash('sha256').update(readFileSync(archive)).digest('hex');
 const sums = join(root, 'release', 'SHA256SUMS.txt');
