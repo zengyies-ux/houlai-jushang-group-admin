@@ -18,9 +18,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: windows-x64
-            os: windows-2022
-            architecture: x64
           - target: macos-arm64
             os: macos-15
             architecture: arm64
@@ -57,9 +54,6 @@ jobs:
       - name: Package macOS
         if: matrix.target == 'macos-arm64'
         run: npm run package:mac
-      - name: Package Windows
-        if: matrix.target == 'windows-x64'
-        run: npm run package:windows
       - name: Smoke from extracted macOS ZIP and bundled Node
         if: matrix.target == 'macos-arm64'
         shell: bash
@@ -68,15 +62,6 @@ jobs:
           unzip -q release/后来居上组管理后台-v*-macos-arm64.zip -d '/tmp/工作台 验证'
           package_dir=$(find '/tmp/工作台 验证' -maxdepth 1 -type d -name '后来居上组管理后台-*' | head -1)
           "$package_dir/runtime/node" scripts/smoke-package.mjs "$package_dir"
-      - name: Smoke from extracted Windows ZIP and bundled Node
-        if: matrix.target == 'windows-x64'
-        shell: pwsh
-        run: |
-          $archive = Get-ChildItem release/后来居上组管理后台-v*-windows-x64.zip | Select-Object -First 1
-          Expand-Archive -Path $archive.FullName -DestinationPath 'C:\workbench smoke' -Force
-          $package = Get-ChildItem 'C:\workbench smoke' -Directory | Where-Object Name -Like '后来居上组管理后台-*' | Select-Object -First 1
-          & "$($package.FullName)\runtime\node.exe" scripts/smoke-package.mjs "$($package.FullName)"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
@@ -102,10 +87,10 @@ jobs:
           printf '%s\n' \
             'V0.3.2：工作台增加未来三天交付提醒；保留现有农场界面和数据结构。' \
             '' \
-            '成品包：macOS arm64（Apple 芯片）及 Windows x64。请下载与设备架构对应的 ZIP，并用 SHA256SUMS.txt 校验；Source code ZIP 不是免安装运行包。' \
+            '成品包：macOS arm64（Apple 芯片）。请下载 macos-arm64 ZIP 并用 SHA256SUMS.txt 校验；Source code ZIP 不是免安装运行包。' \
             '' \
-            'GitHub Actions 已在 macOS arm64 与 Windows x64 runner 上安装、测试、构建、打包，并从解压包验证启动/停止脚本、SQLite 写入、备份下载、重启保留、前端路由和本地素材。' \
-            '办公 Mac 首次部署、真实 Windows 启动、Mac 到 Windows 局域网访问、防火墙和目标设备离线运行仍待对应设备验收。应用运行无需连接 GitHub；GitHub 不保存正式业务数据库。' \
+            'GitHub Actions 已在 macOS arm64 runner 上安装、测试、构建、打包，并从解压包验证启动/停止脚本、SQLite 写入、备份下载、重启保留、前端路由和本地素材。' \
+            'Windows 独立运行包暂缓发布；Windows 日常通过浏览器访问办公 Mac。办公 Mac 首次部署、Mac 到 Windows 局域网访问、防火墙和目标设备离线运行仍待对应设备验收。应用运行无需连接 GitHub；GitHub 不保存正式业务数据库。' \
             > RELEASE_NOTES.txt
       - name: Create draft release
         env:

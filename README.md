@@ -4,7 +4,7 @@
 
 ## 成品下载与首次打开
 
-源码位于[私有 GitHub 仓库](https://github.com/zengyies-ux/houlai-jushang-group-admin)。正式发布后，从 [v0.3.2 Release](https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2) 下载**成品 ZIP** 和 `SHA256SUMS.txt`；不要下载 GitHub 自动生成的 Source code ZIP，它不能直接运行。该直达地址在正式发布前可能尚不可访问；若页面不存在、只有草稿或缺少成品附件，请等待验证和发布完成。
+源码位于[私有 GitHub 仓库](https://github.com/zengyies-ux/houlai-jushang-group-admin)。本次只交付 Mac arm64 成品。正式发布后，从 [v0.3.2 Release](https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2) 下载 **macOS arm64 成品 ZIP** 和 `SHA256SUMS.txt`；不要下载 GitHub 自动生成的 Source code ZIP，它不能直接运行。该直达地址在正式发布前可能尚不可访问；若页面不存在、只有草稿或缺少成品附件，请等待验证和发布完成。
 
 1. 先读 [办公 Mac 部署与更新](docs/办公Mac部署与更新.md)，确认办公 Mac 是 Apple 芯片。当前 Mac 成品仅适用于 macOS arm64；Intel Mac 需要另行构建与验证。
 2. 下载文件名以 `macos-arm64.zip` 结尾的成品附件，核对 SHA-256 后解压。双击顶层文件夹里的 `启动.command`；浏览器应打开 `http://127.0.0.1:4173`。
@@ -22,7 +22,7 @@
 
 办公 Mac 首次运行会建空工作台，不导入演示数据。已有办公数据不可被开发机数据库覆盖。办公 Mac 应保持开机、联网且不休眠；现有启动脚本在前台终端运行，关闭终端或系统重启后需要重新启动。本版没有自动开机运行，也不会自动下载和安装更新。Windows 浏览器应使用办公 Mac「设置 → 局域网访问」列出的地址，不能使用 Windows 自己的 `127.0.0.1`。
 
-Windows x64 独立运行包仍保留构建能力，日常连接办公 Mac 时不需要它。各平台 CI、解压成品和目标设备的实际验收结果见 [V0.3.2 验证与发布记录](docs/V0.3.2-验证与发布记录.md)；CI 检查不等于办公 Mac 已安装或 Windows 实机已验收。
+V0.3.2 Release 只包含 Mac arm64 运行包。Windows x64 独立运行包推迟到后续版本验证与交付；本版的 Windows 电脑只用浏览器访问办公 Mac。Mac 成品和目标设备的实际验收结果见 [V0.3.2 验证与发布记录](docs/V0.3.2-验证与发布记录.md)；开发机冒烟检查不等于办公 Mac 已安装或 Windows 浏览器实机已验收。
 
 ## 先做什么、怎么看提醒
 
@@ -42,6 +42,6 @@ npm run build
 npm run dev
 ```
 
-Mac arm64 在本平台运行 `npm run package:mac`；Windows x64 应在 Windows x64 上运行 `npm run package:windows`，使原生 SQLite 模块在目标平台安装与验证。自动构建见 [build-release.yml](.github/workflows/build-release.yml)。`release/` 下的 ZIP 和校验清单用于发布；业务数据库、备份、日志、口令和运行状态不能进入 Git。
+Mac arm64 在本平台运行 `npm run package:mac`，使原生 SQLite 模块在目标架构安装与验证。自动构建见 [build-release.yml](.github/workflows/build-release.yml)；Windows x64 打包能力留待后续验证，不属于本次 Release。`release/` 下的 ZIP 和校验清单用于发布；业务数据库、备份、日志、口令和运行状态不能进入 Git。
 
 源码分为 `apps/web`（页面）、`apps/server`（API 与 SQLite）、`packages/shared`（共享规则）、`drizzle`（迁移）与 `scripts`（打包和冒烟验证）。版本历史见 [CHANGELOG](CHANGELOG.md)。
