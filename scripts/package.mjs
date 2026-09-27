@@ -10,7 +10,7 @@ import {
   writeFileSync,
   chmodSync,
 } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 
@@ -62,21 +62,18 @@ cpSync(join(root, 'dist'), join(out, 'app', 'dist'), { recursive: true });
 cpSync(join(root, 'drizzle'), join(out, 'app', 'drizzle'), { recursive: true });
 mkdirSync(join(out, 'app', 'tools'), { recursive: true });
 copyFileSync(join(root, 'scripts', 'stop.mjs'), join(out, 'app', 'tools', 'stop.mjs'));
-cpSync(join(installRoot, 'node_modules'), join(out, 'app', 'node_modules'), {
+const installedModules = join(installRoot, 'node_modules');
+const bundledModules = join(out, 'app', 'node_modules');
+cpSync(installedModules, bundledModules, {
   recursive: true,
-  dereference: false,
+  filter: (source) => {
+    // npm workspaces are symlinks on Unix and junctions on Windows. The server
+    // bundle already includes workspace code; neither those links nor .bin are
+    // needed at runtime, and deleting copied junctions can remove their target.
+    return basename(source) !== '.bin' && !lstatSync(source).isSymbolicLink();
+  },
 });
-for (const p of ['@workbench/server', '@workbench/web', '@workbench/shared'])
-  rmSync(join(out, 'app', 'node_modules', p), { recursive: true, force: true });
-const removeLinks = (dir) => {
-  for (const name of readdirSync(dir)) {
-    const file = join(dir, name),
-      stat = lstatSync(file);
-    if (stat.isSymbolicLink()) rmSync(file, { force: true });
-    else if (stat.isDirectory()) removeLinks(file);
-  }
-};
-removeLinks(join(out, 'app', 'node_modules'));
+if (!existsSync(bundledModules)) throw new Error('复制后的生产依赖目录不存在');
 writeFileSync(join(out, 'app', 'package.json'), '{"private":true,"type":"module"}\n');
 const commit = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: root, encoding: 'utf8' });
 const status = spawnSync('git', ['status', '--porcelain', '--untracked-files=all'], {
