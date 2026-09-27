@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS smoke_records (id TEXT PRIMARY KEY, value TEXT NOT NULL, created_at TEXT NOT NULL);

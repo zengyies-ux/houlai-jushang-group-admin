@@ -1,0 +1,62 @@
+{
+  "name": "houlai-jushang-group-admin",
+  "private": true,
+  "version": "0.3.2",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:server": "node scripts/dev-server.mjs",
+    "dev:web": "vite --config apps/web/vite.config.ts",
+    "build": "npm run typecheck && npm run build:web && npm run build:server",
+    "build:web": "vite build --config apps/web/vite.config.ts",
+    "build:server": "esbuild apps/server/src/index.ts --bundle --platform=node --format=esm --target=node24 --packages=external --outfile=dist/server/index.js",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,css,json,html}\" \"packages/**/*.{ts,json}\" \"scripts/**/*.mjs\" \".github/workflows/*.yml\" package.json tsconfig.json components.json",
+    "test": "vitest run",
+    "package:mac": "node scripts/package.mjs macos-arm64",
+    "package:windows": "node scripts/package.mjs windows-x64"
+  },
+  "dependencies": {
+    "@fastify/static": "10.1.4",
+    "@hookform/resolvers": "5.2.2",
+    "@radix-ui/react-alert-dialog": "1.1.23",
+    "@radix-ui/react-dialog": "1.1.23",
+    "@radix-ui/react-popover": "1.1.23",
+    "@tanstack/react-query": "5.103.2",
+    "better-sqlite3": "13.0.3",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "drizzle-orm": "0.45.3",
+    "fastify": "5.12.5",
+    "lucide-react": "0.468.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "7.67.0",
+    "react-router-dom": "7.18.4",
+    "tailwind-merge": "3.7.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.1.18",
+    "@types/better-sqlite3": "7.6.13",
+    "@types/node": "24.10.0",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.2",
+    "concurrently": "9.2.1",
+    "esbuild": "0.27.2",
+    "prettier": "3.9.9",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.6",
+    "vitest": "4.0.17"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  }
+}
