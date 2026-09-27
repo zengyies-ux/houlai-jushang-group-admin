@@ -1,11 +1,11 @@
 # 办公 Mac 部署与更新 · 后来居上组管理后台 V0.3.2
 
-这份交接用于另一台**办公 Mac**。开发 Mac 负责开发与发布；办公 Mac 是唯一的正式服务和正式业务数据主机；Windows 电脑只用浏览器访问办公 Mac，**不需要 Windows 安装包**。V0.3.2 只交付 Mac arm64 成品，Windows x64 独立包推迟到后续验证。当前仓库是[私有仓库](https://github.com/zengyies-ux/houlai-jushang-group-admin)。从已正式发布的 [v0.3.2 Release](https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2) 下载 Mac 成品 ZIP 与校验清单，不能使用源码 ZIP 冒充成品。私有仓库须先在办公 Mac 上用有权限的 GitHub 账号登录。
+这份交接用于另一台**办公 Mac**。开发 Mac 负责开发与发布；办公 Mac 是唯一的正式服务和正式业务数据主机；Windows 电脑只用浏览器访问办公 Mac，**不需要 Windows 安装包**。V0.3.2 只交付 Mac arm64 成品，Windows x64 独立包推迟到后续验证。当前仓库是[公开仓库](https://github.com/zengyies-ux/houlai-jushang-group-admin)。从已正式发布的 [v0.3.2 Release](https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2) 下载 Mac 成品 ZIP 与校验清单，不能使用源码 ZIP 冒充成品；公开附件不要求 GitHub 登录。
 
 ## 第一次部署：照着做
 
 1. 在办公 Mac 的「 → 关于本机」确认芯片是 Apple M 系列；也可在终端运行 `uname -m`，结果须为 `arm64`。当前 Mac 成品只支持 macOS arm64。若是 Intel Mac（`x86_64`），先取得并验证适配成品，不要试用 Apple 芯片包。检查是否已经有旧数据或正在运行的工作台；若有，先走下文“更新”或“迁移”，不能当空白新装。
-2. 在**办公 Mac 自己的浏览器**登录有权限访问仓库的 GitHub 账号，打开上方 v0.3.2 Release 链接，确认它是正式发布版本。下载文件名以 `macos-arm64.zip` 结尾的**附件**及同一 Release 的 `SHA256SUMS.txt`。私有仓库凭据留在办公 Mac，不要复制开发机凭据，也不要把密码、令牌或验证码发给 Codex。GitHub 自动生成的 Source code ZIP 不是运行包。
+2. 在**办公 Mac 的浏览器**打开上方 v0.3.2 Release 链接，确认它是正式发布版本。下载 `houlai-jushang-group-admin-v0.3.2-macos-arm64.zip` **附件**及同一 Release 的 `SHA256SUMS.txt`。公开附件无需登录，也无需向 Codex 提供密码、令牌或验证码。GitHub 自动生成的 Source code ZIP 不是运行包。
 3. 在 Mac 终端输入 `shasum -a 256`，把 ZIP 从 Finder 拖入终端并回车。将输出与 `SHA256SUMS.txt` 中该 ZIP 的一行逐字比对；不一致就重新下载，不能继续安装。解压 ZIP。推荐由办公 Mac 的 Codex 把**解压后的包内文件**放到 `~/Applications/后来居上工作台/releases/0.3.2/`，让 `~/Applications/后来居上工作台/current` 指向该目录，并在同级记下版本与实际路径。`current/启动.command` 和 `current/停止.command` 是固定入口，日后更新只切换 `current`。
 4. 正式数据默认位于 `~/Library/Application Support/AIShortDramaWorkbench/data/`，与程序目录、Git 仓库及 iCloud 同步文件夹分开。首次确实没有数据才让程序创建空工作台，不导入演示任务。若该目录已有文件，先确认来源、当前进程和备份；不得用开发 Mac 的库覆盖。若确有业务数据要从开发 Mac 单次迁移，应先从源机做一致性备份，在办公 Mac 本机恢复并核对后，停止源机继续录入。两台机器的业务数据不会自动合并。
 5. 双击 `current/启动.command`，让启动终端保持打开。浏览器应打开 `http://127.0.0.1:4173`；没有自动打开时手动访问。在「设置 → 技术信息与数据位置」确认 v0.3.2、`darwin/arm64` 和实际数据目录。双击 `current/停止.command`，重新启动后再次核对版本与目录。新空库不必为了验收而写入演示任务；若已有正式数据，核对既有成员、任务、历史、头像和背景，不为测试添加或删除业务记录。下一步保存局域网设置可验证写入及重启保留。
@@ -44,7 +44,7 @@
 | 双击后没打开网页 | 看启动终端是否仍在、是否报 4173 端口占用；手动访问 `http://127.0.0.1:4173`。不要删除数据来“修复”。 |
 | Windows 连不上 | 在办公 Mac 本机核对服务、口令、局域网开关和重启；使用设置页所列地址，检查同网、防火墙和休眠状态。 |
 | 更新后似乎没数据 | 先核对 Mac 登录用户、页面显示的实际数据目录及 `DATA_DIR`；暂停录入，查旧版数据与备份，不覆盖疑似正式库。 |
-| GitHub 附件下载不了 | 在办公 Mac 的浏览器用有仓库权限的账号登录；确认版本是正式 Release，下载的是附件而非源码 ZIP。 |
+| GitHub 附件下载不了 | 检查网络和 Release 链接，确认下载的是正式发布的附件而非源码 ZIP；公开附件无需登录。 |
 | 校验值不一致 | 停止安装，重新下载 ZIP 和同一 Release 的校验清单。 |
 
 首次部署算完成，须至少看到：办公 Mac 本机显示正确版本及数据目录；停止再启动后数据仍在；一致性备份可在列表和下载位置找到；设置页显示局域网地址；Windows 用该地址成功打开并保存；实际芯片、系统、防火墙和首次打开行为已记录。开发 Mac 上的构建与冒烟检查不能代替这些目标机验收。
@@ -54,9 +54,9 @@
 ### 第一次部署
 
 ```text
-请在这台办公 Mac 上部署“后来居上组管理后台”v0.3.2。私有源码仓库是 https://github.com/zengyies-ux/houlai-jushang-group-admin ，目标正式 Release 地址是 https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2 。先核实 Release 已正式发布且有 macos-arm64 成品 ZIP 与同版 SHA256SUMS.txt；若缺失，不要拿 Source code ZIP 替代，也不要宣称安装成功，请报告阻塞。
+请在这台办公 Mac 上部署“后来居上组管理后台”v0.3.2。公开源码仓库是 https://github.com/zengyies-ux/houlai-jushang-group-admin ，正式 Release 地址是 https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2 。先核实 Release 已正式发布且有 houlai-jushang-group-admin-v0.3.2-macos-arm64.zip 与同版 SHA256SUMS.txt；若缺失，不要拿 Source code ZIP 替代，也不要宣称安装成功，请报告阻塞。
 
-先检查本机 uname -m、macOS 用户、4173 端口、旧程序和 ~/Library/Application Support/AIShortDramaWorkbench/data/ 的现状。只有 arm64 可用当前包；Intel Mac 请报告适配缺口。若已有业务数据或服务，请保留，先判断应执行更新还是迁移，绝不能清空或用开发机数据库覆盖。下载私有附件时请引导我在这台办公 Mac 自己完成 GitHub 浏览器授权，不索取或回显密码、令牌、验证码。
+先检查本机 uname -m、macOS 用户、4173 端口、旧程序和 ~/Library/Application Support/AIShortDramaWorkbench/data/ 的现状。只有 arm64 可用当前包；Intel Mac 请报告适配缺口。若已有业务数据或服务，请保留，先判断应执行更新还是迁移，绝不能清空或用开发机数据库覆盖。公开 Release 附件无需 GitHub 登录，也不要索取或回显密码、令牌、验证码。
 
 核对 ZIP 的 SHA-256；把解压后的成品放在 ~/Applications/后来居上工作台/releases/0.3.2/，建立 ~/Applications/后来居上工作台/current 作为固定入口，记录实际路径。正式数据与程序、Git 仓库和 iCloud 同步目录分离；默认沿用上述 data 目录。启动后在本机浏览器核对 v0.3.2 和实际数据路径；首次空库不要写演示任务，已有正式记录时也不要为测试添加或删除数据。之后指导我在办公 Mac 本机设置口令和局域网开关并重启，以这项保存验证停止重启后的数据保留。用 Windows 浏览器访问设置页给出的办公 Mac 地址，完成备份和下载。不要开放公网或关闭系统保护；记录已通过和待我在目标设备操作的步骤。现有前台启动方式不是开机自启，不要声称部署了自动更新。
 ```
@@ -64,7 +64,7 @@
 ### 以后更新
 
 ```text
-请把这台办公 Mac 的“后来居上组管理后台”更新到该私有仓库 https://github.com/zengyies-ux/houlai-jushang-group-admin 中最新的、已正式发布且适配本机架构的稳定成品。不要追踪开发分支、草稿、预发布或每个 commit，也不要用 Source code ZIP。先核对当前版本、~/Applications/后来居上工作台/current 的真实位置和工作台“设置 → 技术信息与数据位置”显示的实际数据目录；若使用自定义 DATA_DIR，请在全程保持一致。私有仓库登录只在这台办公 Mac 自己完成，勿索取或复制凭据。
+请把这台办公 Mac 的“后来居上组管理后台”更新到公开仓库 https://github.com/zengyies-ux/houlai-jushang-group-admin 中最新的、已正式发布且适配本机架构的稳定成品。不要追踪开发分支、草稿、预发布或每个 commit，也不要用 Source code ZIP。先核对当前版本、~/Applications/后来居上工作台/current 的真实位置和工作台“设置 → 技术信息与数据位置”显示的实际数据目录；若使用自定义 DATA_DIR，请在全程保持一致。公开 Release 附件无需 GitHub 登录，也不要索取凭据。
 
 下载新成品 ZIP 和同版 SHA256SUMS.txt 并核对 SHA-256，在 releases/<新版本>/ 准备好新程序。通知所有浏览器暂停编辑；仍用旧服务时点击“立即备份”并下载，备份至停服之间不允许其他写入。停止旧服务，确认只有一个实例，切换 current 并启动新版。验证版本、真实数据目录、小组、成员、任务、事件、头像、背景、口令、局域网设置和 Windows 浏览器访问后，再恢复编辑。保留旧程序及更新前备份；不覆盖或同步办公 Mac 正式库。
 
