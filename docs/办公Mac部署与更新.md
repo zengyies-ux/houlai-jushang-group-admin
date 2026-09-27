@@ -1,6 +1,6 @@
 # 办公 Mac 部署与更新 · 后来居上组管理后台 V0.3.2
 
-这份交接用于另一台**办公 Mac**。开发 Mac 负责开发与发布；办公 Mac 是唯一的正式服务和正式业务数据主机；Windows 电脑只用浏览器访问办公 Mac，**不需要 Windows 安装包**。V0.3.2 只交付 Mac arm64 成品，Windows x64 独立包推迟到后续验证。当前仓库是[私有仓库](https://github.com/zengyies-ux/houlai-jushang-group-admin)。v0.3.2 只能在完成构建检查、正式 Release 发布后从 [v0.3.2 Release](https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2) 下载，不能使用源码 ZIP 冒充成品。该直达地址在正式发布前可能尚不可访问；部署前须先核实页面标为正式发布，Mac 成品附件和校验清单确实可下载。
+这份交接用于另一台**办公 Mac**。开发 Mac 负责开发与发布；办公 Mac 是唯一的正式服务和正式业务数据主机；Windows 电脑只用浏览器访问办公 Mac，**不需要 Windows 安装包**。V0.3.2 只交付 Mac arm64 成品，Windows x64 独立包推迟到后续验证。当前仓库是[私有仓库](https://github.com/zengyies-ux/houlai-jushang-group-admin)。从已正式发布的 [v0.3.2 Release](https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2) 下载 Mac 成品 ZIP 与校验清单，不能使用源码 ZIP 冒充成品。私有仓库须先在办公 Mac 上用有权限的 GitHub 账号登录。
 
 ## 第一次部署：照着做
 

@@ -4,7 +4,7 @@
 
 ## 成品下载与首次打开
 
-源码位于[私有 GitHub 仓库](https://github.com/zengyies-ux/houlai-jushang-group-admin)。本次只交付 Mac arm64 成品。正式发布后，从 [v0.3.2 Release](https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2) 下载 **macOS arm64 成品 ZIP** 和 `SHA256SUMS.txt`；不要下载 GitHub 自动生成的 Source code ZIP，它不能直接运行。该直达地址在正式发布前可能尚不可访问；若页面不存在、只有草稿或缺少成品附件，请等待验证和发布完成。
+源码位于[私有 GitHub 仓库](https://github.com/zengyies-ux/houlai-jushang-group-admin)。本次只交付 Mac arm64 成品。从已正式发布的 [v0.3.2 Release](https://github.com/zengyies-ux/houlai-jushang-group-admin/releases/tag/v0.3.2) 下载 `houlai-jushang-group-admin-v0.3.2-macos-arm64.zip` 和 `SHA256SUMS.txt`；不要下载 GitHub 自动生成的 Source code ZIP，它不能直接运行。私有仓库需要有权限的 GitHub 账号登录。
 
 1. 先读 [办公 Mac 部署与更新](docs/办公Mac部署与更新.md)，确认办公 Mac 是 Apple 芯片。当前 Mac 成品仅适用于 macOS arm64；Intel Mac 需要另行构建与验证。
 2. 下载文件名以 `macos-arm64.zip` 结尾的成品附件，核对 SHA-256 后解压。双击顶层文件夹里的 `启动.command`；浏览器应打开 `http://127.0.0.1:4173`。

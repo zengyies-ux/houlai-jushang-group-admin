@@ -81,9 +81,15 @@ jobs:
           path: artifacts
           merge-multiple: true
       - name: Prepare checksums and draft notes
+        env:
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
         run: |
           cd artifacts
-          sha256sum 后来居上组管理后台-v*.zip > SHA256SUMS.txt
+          original=$(find . -maxdepth 1 -type f -name '*-macos-arm64.zip' -print -quit)
+          test -n "$original"
+          asset="houlai-jushang-group-admin-${RELEASE_TAG}-macos-arm64.zip"
+          mv "$original" "$asset"
+          sha256sum "$asset" > SHA256SUMS.txt
           printf '%s\n' \
             'V0.3.2：工作台增加未来三天交付提醒；保留现有农场界面和数据结构。' \
             '' \
@@ -98,4 +104,4 @@ jobs:
           GH_REPO: ${{ github.repository }}
           TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
         run: |
-          gh release create "$TAG" artifacts/后来居上组管理后台-v*.zip artifacts/SHA256SUMS.txt --draft --verify-tag --title "后来居上组管理后台 $TAG" --notes-file artifacts/RELEASE_NOTES.txt
+          gh release create "$TAG" "artifacts/houlai-jushang-group-admin-${TAG}-macos-arm64.zip" artifacts/SHA256SUMS.txt --draft --verify-tag --title "后来居上组管理后台 $TAG" --notes-file artifacts/RELEASE_NOTES.txt
